@@ -42,7 +42,6 @@ router.get('/users', (req,res)=>{
         res.status(400).send(e.message);
     }
 })
-
 router.get('/users/:id', (req,res)=>{
     try{
         db.getConnection((err,connection)=>{
@@ -62,6 +61,102 @@ router.get('/users/:id', (req,res)=>{
             })
             connection.release();
             
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+router.get('/users/cart', (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err) throw err;
+            const query = 'SELECT * FROM users INNER JOIN cart ON users.cartID=cart.cartID';
+            connection.query(query, (err,results)=>{
+                if(err) throw err;
+                res.json({
+                    results: results
+                });
+            })
+            connection.release();
+            
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
+router.get('/users/:id/cart', (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err) throw err;
+            const query = 'SELECT * FROM users INNER JOIN cart ON users.cartID = cart.cartID WHERE userID = ?';
+            connection.query(query, req.params.id, (err,results)=>{
+                if(err) throw err;
+                if(results.length>0){
+                    res.json({
+                        results: results
+                    });
+                }else{
+                    res.json({
+                        result: 'There is no user with that id'
+                    })
+                }
+            })
+            connection.release();
+            
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
+router.get('/users/billing', (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err) throw err;
+            const query = 'SELECT * FROM users INNER JOIN billingInfo ON users.userID = billingInfo.billingID';
+            connection.query(query, (err,results)=>{
+                if(err) throw err;
+                res.json({
+                    results: results
+                });
+            })
+            connection.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
+router.get('/users/:id/billing', (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err) throw err;
+            const query = 'SELECT * FROM users INNER JOIN billingInfo ON users.userID = billingInfo.billingID';
+            connection.query(query, (err,results)=>{
+                if(err) throw err;
+                res.json({
+                    results: results
+                });
+            })
+            connection.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+router.get('/billing', (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err) throw err;
+            const query = 'SELECT * FROM billingInfo INNER JOIN billingInfo ON users.userID = billingInfo.billingID';
+            connection.query(query, (err,results)=>{
+                if(err) throw err;
+                res.json({
+                    results: results
+                });
+            })
+            connection.release();
         })
     }catch(e){
         res.status(400).send(e.message);
@@ -112,21 +207,13 @@ router.get('/products/:id', (req,res)=>{
     }
 })
 
-router.put('products/:id', (req,res)=>{
-    try{
-
-    }catch(e){
-        res.status(400).send(e.message);
-    }
-})
-
 // Register a user
 
 router.post('/users', bodyparser.json(), async (req,res)=>{
     try{
         db.getConnection((err,connected)=>{
             if(err)throw err;
-            const check = 'SELECT userEmail FROM users WHERE ?';
+            const check = 'SELECT userEmail FROM users WHERE userEmail = ?';
             connected.query(check, req.body.userEmail, async (err,results)=>{
                 if(err)throw err;
                 if(results.length > 0){
@@ -139,8 +226,8 @@ router.post('/users', bodyparser.json(), async (req,res)=>{
                         const salt = await bcrypt.genSalt();
                         req.body.userPassword = await bcrypt.hash(req.body.userPassword, salt);
                         try{
-                            const query = 'INSERT INTO users(firstName,lastName,userPassword,userEmail,address,phoneNumber) VALUES(?,?,?,?,?,?)'
-                            connected.query(query, [req.body.firstName,req.body.lastName,req.body.userPassword,req.body.userEmail,req.body.address,req.body.phoneNumber], (err,result)=>{
+                            const query = 'INSERT INTO cart(cartItems) VALUES(null);INSERT INTO users(userID,firstName,lastName,userPassword,userEmail,phoneNumber,cartID) VALUES(LAST_INSERT_ID(),?,?,?,?,?,LAST_INSERT_ID());INSERT INTO billingInfo(billingID,userID) VALUES(LAST_INSERT_ID(), LAST_INSERT_ID());'
+                            connected.query(query, [req.body.firstName,req.body.lastName,req.body.userPassword,req.body.userEmail,req.body.phoneNumber], (err,result)=>{
                                 if(err) throw err;
                                 res.json({
                                     result: result
