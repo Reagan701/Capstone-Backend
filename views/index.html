@@ -14,7 +14,6 @@
             scroll-behavior: smooth;
             font-family: 'Roboto', sans-serif;
         }
-
         body{
             background-color: var(--background-color) !important;
             transition: all 0.5s linear;
@@ -32,11 +31,13 @@
         @media screen and (max-width:1200px) {
             #rowWidth{
                 width: 110px !important;
+                height: 65px !important;
             }
         }
         @media screen and (min-width:1201px) {
             #rowWidth{
                 width: 250px !important;
+                height: 65px !important;
             }
         }
     </style>
@@ -45,75 +46,130 @@
 </head>
 <body>
     <div class="vh-100 container">
-        <h1 class="text-center pt-5">Digiverse API</h1>
-        <div class="form-check form-switch">
+        <h1 class="text-center text-white bg-dark pb-4 pt-3 mx-5 mt-3">Digiverse API</h1>
+        <!-- <div class="form-check form-switch">
             <input onclick="themeSwitch(event)" type="checkbox" role="switch" class="form-check-input">
+        </div> -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h3>User Routes</h3>
+                <table class="table table-dark">
+                    <tbody>
+                        <tr>
+                            <th scope="row">GET</th>
+                            <td id="rowWidth">/users</td>
+                            <td>Shows all users on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">POST</th>
+                            <td id="rowWidth">/users</td>
+                            <td>Adds a new user to the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">GET</th>
+                            <td id="rowWidth">/users/:id</td>
+                            <td>Shows the user with the specific ID on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">PUT</th>
+                            <td id="rowWidth">/users/:id</td>
+                            <td>Edits the user with the specific ID on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">DELETE</th>
+                            <td id="rowWidth">/users/:id</td>
+                            <td>Deletes the user with the specific ID from database</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h3>Product Routes</h3>
+                <table class="table table-dark">
+                    <tbody>
+                        <tr>
+                            <th scope="row">GET</th>
+                            <td id="rowWidth">/products</td>
+                            <td>Shows all products on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">POST</th>
+                            <td id="rowWidth">/products</td>
+                            <td>Adds a new product to the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">GET</th>
+                            <td id="rowWidth">/products/:id</td>
+                            <td>Shows the product with the specific ID on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">PUT</th>
+                            <td id="rowWidth">/products/:id</td>
+                            <td>Edits the product with the specific ID on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">DELETE</th>
+                            <td id="rowWidth">/products/:id</td>
+                            <td>Deletes the user with the specific ID from the database</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6 mt-3">
+                <h3>Billing Routes</h3>
+                <table class="table table-dark">
+                    <tbody>
+                        <tr>
+                            <th scope="row">GET</th>
+                            <td id="rowWidth">/billing</td>
+                            <td>Shows all billing information on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">GET</th>
+                            <td id="rowWidth">/billing/:id</td>
+                            <td>Shows all billing information of the user with the specific ID on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">PUT</th>
+                            <td id="rowWidth">/billing/:id</td>
+                            <td>Updates the billing information of the user with the specific ID</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">DELETE</th>
+                            <td id="rowWidth">/billing/:id</td>
+                            <td>Clears the billing information of the user with the specific ID</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6 mt-3">
+                <h3>Cart Routes</h3>
+                <table class="table table-dark">
+                    <tbody>
+                        <tr>
+                            <th scope="row">GET</th>
+                            <td id="rowWidth">/carts</td>
+                            <td>Shows all cart information on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">GET</th>
+                            <td id="rowWidth">/cart/:id</td>
+                            <td>Shows all cart information of the user with the specific ID on the database</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">POST</th>
+                            <td id="rowWidth">/cart/:id</td>
+                            <td>Updates the cart information of the user with the specific ID</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">DELETE</th>
+                            <td id="rowWidth">/cart/:id</td>
+                            <td>Clears the cart of the user with the specific ID on the database</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <h3>User Routes</h3>
-        <table class="table table-dark">
-            <tbody>
-                <tr>
-                    <th scope="row">GET</th>
-                    <td id="rowWidth">/</td>
-                    <td>Shows all available end-points for this API</td>
-                </tr>
-                <tr>
-                    <th scope="row">GET</th>
-                    <td id="rowWidth">/users</td>
-                    <td>Shows all users on the database</td>
-                </tr>
-                <tr>
-                    <th scope="row">POST</th>
-                    <td id="rowWidth">/users</td>
-                    <td>Adds a new user to the database</td>
-                </tr>
-                <tr>
-                    <th scope="row">GET</th>
-                    <td id="rowWidth">/users/:id</td>
-                    <td>Shows the user with the specific ID on the database</td>
-                </tr>
-                <tr>
-                    <th scope="row">PUT</th>
-                    <td id="rowWidth">/users/:id</td>
-                    <td>Edits the user with the specific ID on the database</td>
-                </tr>
-                <tr>
-                    <th scope="row">DELETE</th>
-                    <td id="rowWidth">/users/:id</td>
-                    <td>Removes the user with the specific ID on the database</td>
-                </tr>
-            </tbody>
-        </table>
-        <h3>Product Routes</h3>
-        <table class="table table-dark">
-            <tbody>
-                <tr>
-                    <th scope="row">GET</th>
-                    <td id="rowWidth">/products</td>
-                    <td>Shows all products on the database</td>
-                </tr>
-                <tr>
-                    <th scope="row">POST</th>
-                    <td id="rowWidth">/products</td>
-                    <td>Adds a new product to the database</td>
-                </tr>
-                <tr>
-                    <th scope="row">GET</th>
-                    <td id="rowWidth">/products/:id</td>
-                    <td>Shows the product with the specific ID on the database</td>
-                </tr>
-                <tr>
-                    <th scope="row">PUT</th>
-                    <td id="rowWidth">/products/:id</td>
-                    <td>Edits the product with the specific ID on the database</td>
-                </tr>
-                <tr>
-                    <th scope="row">DELETE</th>
-                    <td id="rowWidth">/products/:id</td>
-                    <td>DELETE the user with the specific ID on the database</td>
-                </tr>
-            </tbody>
-        </table>
     </div>
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>

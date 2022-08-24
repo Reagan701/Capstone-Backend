@@ -46,7 +46,7 @@ router.get('/users/:id', (req,res)=>{
     try{
         db.getConnection((err,connection)=>{
             if(err) throw err;
-            const query = 'SELECT * FROM users WHERE id = ?';
+            const query = 'SELECT * FROM users WHERE userID = ?';
             connection.query(query, req.params.id, (err,results)=>{
                 if(err) throw err;
                 if(results.length>0){
@@ -66,7 +66,7 @@ router.get('/users/:id', (req,res)=>{
         res.status(400).send(e.message);
     }
 })
-router.get('/users/cart', (req,res)=>{
+router.get('/usercart', (req,res)=>{
     try{
         db.getConnection((err,connection)=>{
             if(err) throw err;
@@ -85,32 +85,78 @@ router.get('/users/cart', (req,res)=>{
     }
 })
 
-router.get('/users/:id/cart', (req,res)=>{
+router.get('/cart/:id', (req,res)=>{
     try{
-        db.getConnection((err,connection)=>{
-            if(err) throw err;
-            const query = 'SELECT * FROM users INNER JOIN cart ON users.cartID = cart.cartID WHERE userID = ?';
-            connection.query(query, req.params.id, (err,results)=>{
-                if(err) throw err;
-                if(results.length>0){
-                    res.json({
-                        results: results
-                    });
-                }else{
-                    res.json({
-                        result: 'There is no user with that id'
-                    })
-                }
+        db.getConnection((err,connected)=>{
+            if(err)throw err;
+            const query = 'SELECT * FROM cart WHERE cartID = ?';
+            connected.query(query, req.params.id, (err,results)=>{
+                if(err)throw err;
+                res.json({
+                    results:results
+                });
             })
-            connection.release();
-            
+            connected.release();
         })
     }catch(e){
         res.status(400).send(e.message);
     }
 })
 
-router.get('/users/billing', (req,res)=>{
+router.post('/cart/:id', bodyparser.json(), (req,res)=>{
+    try{
+        db.getConnection((err,connected)=>{
+            if(err)throw err;
+            const query = 'SELECT * FROM cart WHERE cartID = ?'
+            connected.query(query,req.params.id, (err,result)=>{
+                if(err)throw err;
+                let cart = [];
+                if(result[0].cartItems != null){
+                    cart = JSON.parse(result[0].cartItems);
+                }
+                const item = {
+                    prodId: cart.length+1,
+                    prodName: req.body.prodName,
+                    prodImg: req.body.prodImg,
+                    prodDescription: req.body.prodDescription,
+                    category: req.body.category,
+                    price: req.body.price
+                };
+                cart.push(item);
+                const cartQuery = 'UPDATE cart SET cartItems = ? WHERE cartID = ? '
+                connected.query(cartQuery,[JSON.stringify(cart),req.params.id],(err,results)=>{
+                    if(err)throw err;
+                    res.json({
+                        results:results
+                    })
+                });
+            })
+            connected.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
+router.delete('/cart/:id', (req,res)=>{
+    try{
+        db.getConnection((err,connected)=>{
+            if(err)throw err;
+            const query = 'UPDATE cart SET cartItems = null WHERE cartID = ?';
+            connected.query(query,req.params.id,(err,results)=>{
+                if(err)throw err;
+                res.json({
+                    results:results
+                });
+            })
+            connected.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
+router.get('/userbilling', (req,res)=>{
     try{
         db.getConnection((err,connection)=>{
             if(err) throw err;
@@ -145,11 +191,85 @@ router.get('/users/:id/billing', (req,res)=>{
         res.status(400).send(e.message);
     }
 })
+
+router.get('/billing/:id', (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err) throw err;
+            const query = 'SELECT * FROM billingInfo WHERE billingID = ?';
+            connection.query(query, req.params.id, (err,results)=>{
+                if(err) throw err;
+                res.json({
+                    results: results
+                });
+            })
+            connection.release();
+            
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
+router.put('/billing/:id',bodyparser.json(), (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err)throw err;
+            const query = 'UPDATE billingInfo SET country = ?, billAddress = ?, city=?,postalCode = ? WHERE billingID = ?';
+            connection.query(query, [req.body.country,req.body.billAddress,req.body.city,req.body.postalCode,req.params.id], (err,results)=>{
+                if(err)throw err;
+                res.json({
+                    results:results
+                })
+            })
+            connection.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
+router.delete('/billing/:id',(req,res)=>{
+    try{
+        const query = 'UPDATE billingInfo SET country = null, billAddress = null, city=null,postalCode = null WHERE billingID = ?';
+        db.getConnection((err,connected)=>{
+            if(err)throw err;
+            connected.query(query, req.params.id, (err,results)=>{
+                if(err)throw err;
+                res.json({
+                    status:200,
+                    results:results
+                });
+            })
+            connected.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
 router.get('/billing', (req,res)=>{
     try{
         db.getConnection((err,connection)=>{
             if(err) throw err;
-            const query = 'SELECT * FROM billingInfo INNER JOIN billingInfo ON users.userID = billingInfo.billingID';
+            const query = 'SELECT * FROM billingInfo';
+            connection.query(query, (err,results)=>{
+                if(err) throw err;
+                res.json({
+                    results: results
+                });
+            })
+            connection.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+router.get('/cart', (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err) throw err;
+            const query = 'SELECT * FROM cart';
             connection.query(query, (err,results)=>{
                 if(err) throw err;
                 res.json({
@@ -186,7 +306,7 @@ router.get('/products/:id', (req,res)=>{
     try{
         db.getConnection((err,connection)=>{
             if(err) throw err;
-            const query = 'SELECT * FROM products WHERE id = ?';
+            const query = 'SELECT * FROM products WHERE prodId = ?';
             connection.query(query, req.params.id, (err,results)=>{
                 if(err) throw err;
                 if(results.length>0){
@@ -309,10 +429,10 @@ router.patch('/users', bodyparser.json(), (req,res)=>{
 // Delete a user
 router.delete('/users/:id',(req,res)=>{
     try{
-        const query = 'DELETE FROM users WHERE id = ?;ALTER TABLE products AUTO_INCREMENT = 1;';
+        const query = 'DELETE FROM users WHERE userID = ?;DELETE FROM cart WHERE cartID = ?; ALTER TABLE cart AUTO_INCREMENT = 1; ALTER TABLE cart AUTO_INCREMENT = 1; ALTER TABLE users AUTO_INCREMENT = 1;';
         db.getConnection((err,connected)=>{
             if(err)throw err;
-            connected.query(query, req.params.id, (err,results)=>{
+            connected.query(query, [req.params.id,req.params.id], (err,results)=>{
                 if(err)throw err;
                 res.json({
                     status:200,
@@ -329,7 +449,7 @@ router.delete('/users/:id',(req,res)=>{
 // Delete a product
 router.delete('/products/:id',(req,res)=>{
     try{
-        const query = 'DELETE FROM products WHERE id = ?;ALTER TABLE products AUTO_INCREMENT = 1;';
+        const query = 'DELETE FROM products WHERE prodId = ?;ALTER TABLE products AUTO_INCREMENT = 1;';
         db.getConnection((err,connected)=>{
             if(err)throw err;
             connected.query(query, req.params.id, (err,results)=>{
@@ -346,12 +466,12 @@ router.delete('/products/:id',(req,res)=>{
     }
 })
 
-router.patch('/products/:id', bodyparser.json(), (req,res)=>{
+router.put('/products/:id', bodyparser.json(), (req,res)=>{
     try{
-        const query = 'UPDATE products SET prodName = ?,  prodImg = ?, prodDescription, quantity = ?, price = ?';
+        const query = 'UPDATE products SET prodName = ?,  prodImg = ?, prodDescription = ?, category = ?, quantity = ?, price = ?';
         db.getConnection((err,connected)=>{
             if(err)throw err;
-            connected.query(query,[req.body.prodName,req.body.prodImg, req.body.prodDescription,req.body.quantity, req.body.price], (err,results)=>{
+            connected.query(query,[req.body.prodName,req.body.prodImg, req.body.prodDescription,req.body.category,req.body.quantity, req.body.price], (err,results)=>{
                 if(err)throw err;
                 res.json({
                     results:results
@@ -366,10 +486,10 @@ router.patch('/products/:id', bodyparser.json(), (req,res)=>{
 
 router.post('/products', bodyparser.json(), (req,res)=>{
     try{
-        const query = 'INSERT INTO products(prodName,prodImg,prodDescription,category, quantity, price ) VALUES(?,?,?,?,?,?)';
+        const query = 'INSERT INTO products(prodName,prodImg,prodDescription,category, quantity, price) VALUES(?,?,?,?,?,?)';
         db.getConnection((err,connected)=>{
             if(err)throw err;
-            connected.query(query, [req.body.prodName,req.body.prodDescription,req.body.category,req.body.quantity,req.body.price], (err,results)=>{
+            connected.query(query, [req.body.prodName,req.body.prodDescription,req.body.prodImg,req.body.category,req.body.quantity,req.body.price], (err,results)=>{
                 if(err)throw err;
                 res.json({
                     status:200,
