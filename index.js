@@ -9,8 +9,18 @@ const jwt = require('jsonwebtoken');
 
 const port = parseInt(process.env.PORT) || 3000;
 const db = require('./config/dbconn');
+const cors = require('cors');
 
-app.use(router);
+app.use((req,res,next)=>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'PATCH,PUT,DELETE');
+    next();
+})
+
+app.use(router, cors(), express.json(), express.urlencoded({
+    extended:true
+}));
 
 app.listen(port, ()=>{
     console.log('Server is Running at Port: '+port)
