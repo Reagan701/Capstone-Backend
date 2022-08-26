@@ -512,3 +512,21 @@ router.post('/products', bodyparser.json(), (req,res)=>{
         res.status(400).send(e.message);
     }
 })
+
+router.get('/verify', (req,res)=>{
+    const token = req.header('x-auth-token');
+
+    if(!token){
+        res.json({
+            status:400,
+            message: 'There is no user logged in'
+        });
+    }else{
+        jwt.verify(token,process.env.secret, (err,decodedToken)=>{
+            if(err)throw err;
+            res.json({
+                decodedUser: decodedToken
+            })
+        })
+    }
+})
