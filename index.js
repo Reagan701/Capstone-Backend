@@ -336,6 +336,30 @@ router.get('/products/:id', (req,res)=>{
         res.status(400).send(e.message);
     }
 })
+router.get('/productCategory/:category', (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err) throw err;
+            const query = 'SELECT * FROM products WHERE category = ?';
+            connection.query(query, req.params.category, (err,results)=>{
+                if(err) throw err;
+                if(results.length>0){
+                    res.json({
+                        results: results
+                    });
+                }else{
+                    res.json({
+                        result: 'There are no products with that category'
+                    })
+                }
+            })
+            connection.release();
+            
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
 
 // Register a user
 
