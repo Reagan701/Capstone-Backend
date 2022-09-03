@@ -112,6 +112,69 @@ router.get('/cart/:id', (req,res)=>{
         res.status(400).send(e.message);
     }
 })
+router.get('/cart/:id/cartItems', (req,res)=>{
+    try{
+        db.getConnection((err,connected)=>{
+            if(err)throw err;
+            const query = 'SELECT * FROM cart WHERE cartID = ?';
+            connected.query(query, req.params.id, (err,results)=>{
+                if(err)throw err;
+                res.json({
+                    results:JSON.parse(results[0].cartItems)
+                });
+            })
+            connected.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+router.get('/cart/:id/cartItems/:cartID', (req,res)=>{
+    try{
+        db.getConnection((err,connected)=>{
+            if(err)throw err;
+            const query = 'SELECT * FROM cart WHERE cartID = ?';
+            connected.query(query, req.params.id, (err,results)=>{
+                if(err)throw err;
+                const item = JSON.parse(results[0].cartItems).filter((x)=> {return x.prodId == req.params.cartID})
+                res.json({
+                    results:item
+                });
+            })
+            connected.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
+router.delete('/cart/:id/cartItems/:cartID', (req,res)=>{
+    try{
+        db.getConnection((err,connected)=>{
+            if(err)throw err;
+            const query = 'SELECT * FROM cart WHERE cartID = ?';
+            connected.query(query, req.params.id, (err,results)=>{
+                if(err)throw err;
+                const newCart = JSON.parse(results[0].cartItems).filter((x)=> {return x.prodId != req.params.cartID})
+                for(let i = 0; i< newCart.length; i++){
+                    newCart[i].prodId = i+1
+                }
+                const update = 'UPDATE cart SET cartItems = ? WHERE cartID = ?'
+
+                connected.query(update, [JSON.stringify(newCart), req.params.id], (err,result)=>{
+                    if(err)throw err;
+                    res.json({
+                        status:200,
+                        results: result 
+                    })
+                })
+            })
+            connected.release();
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
 
 router.post('/cart/:id', bodyparser.json(), (req,res)=>{
     try{
