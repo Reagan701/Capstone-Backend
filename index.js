@@ -418,7 +418,7 @@ router.patch('/users', bodyparser.json(), (req,res)=>{
                             if(auth){
                                 const payload = {
                                     user:{
-                                        id: results[0].id,
+                                        userId: results[0].userId,
                                         firstName: results[0].firstName,
                                         lastName: results[0].lastName,
                                         userPassword: results[0].userPassword,
