@@ -94,6 +94,24 @@ router.get('/usercart', (req,res)=>{
         res.status(400).send(e.message);
     }
 })
+router.get('/usercart/:id', (req,res)=>{
+    try{
+        db.getConnection((err,connection)=>{
+            if(err) throw err;
+            const query = 'SELECT * FROM users INNER JOIN cart ON users.cartID=cart.cartID WHERE users.cartID = ?';
+            connection.query(query, req.params.id, (err,results)=>{
+                if(err) throw err;
+                res.json({
+                    results: results
+                });
+            })
+            connection.release();
+            
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
 
 router.get('/cart/:id', (req,res)=>{
     try{
