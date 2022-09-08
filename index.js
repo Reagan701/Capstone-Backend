@@ -541,6 +541,26 @@ router.patch('/users', bodyparser.json(), (req,res)=>{
     }
 })
 
+router.put('/users/:id', bodyparser.json(), async (req,res)=>{
+    try{
+        db.getConnection(async (err,connected)=>{
+            if(err)throw err;
+            const salt = await bcrypt.genSalt();
+            req.body.userPassword = await bcrypt.hash(req.body.userPassword, salt);
+            const check = 'UPDATE users SET firstName = ?, lastName = ?, userPassword = ?, userEmail = ?, phoneNumber = ? WHERE userID = ?';
+            
+            connected.query(check,[req.body.firstName, req.body.lastName, req.body.userPassword, req.body.userEmail, req.body.phoneNumber,req.params.id],(err,result)=>{
+                if(err)throw err;
+                res.json({
+                    results:result
+                })
+            })
+        })
+    }catch(e){
+        res.status(400).send(e.message);
+    }
+})
+
 // Delete a user
 router.delete('/users/:id',(req,res)=>{
     try{
