@@ -604,10 +604,10 @@ router.delete('/products/:id',(req,res)=>{
 
 router.put('/products/:id', bodyparser.json(), (req,res)=>{
     try{
-        const query = 'UPDATE products SET prodName = ?,  prodImg = ?, prodDescription = ?, category = ?, quantity = ?, price = ?';
+        const query = 'UPDATE products SET prodName = ?,  prodImg = ?, prodDescription = ?, category = ?, quantity = ?, price = ? WHERE prodId = ?';
         db.getConnection((err,connected)=>{
             if(err)throw err;
-            connected.query(query,[req.body.prodName,req.body.prodImg, req.body.prodDescription,req.body.category,req.body.quantity, req.body.price], (err,results)=>{
+            connected.query(query,[req.body.prodName,req.body.prodImg, req.body.prodDescription,req.body.category,req.body.quantity, req.body.price, req.params.id], (err,results)=>{
                 if(err)throw err;
                 res.json({
                     results:results
