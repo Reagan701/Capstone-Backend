@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const port = parseInt(process.env.PORT) || 3000;
 const db = require('./config/dbconn');
 const cors = require('cors');
+const { errorHandeling } = require('./middleware/errorHandling');
 
 app.use((req,res,next)=>{
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -655,3 +656,5 @@ router.get('/verify', (req,res)=>{
         })
     }
 })
+
+app.use(errorHandeling)
