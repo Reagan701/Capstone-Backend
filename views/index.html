@@ -56,9 +56,6 @@
 <body>
     <div class="vh-100 container">
         <h1 class="fw-bold text-center pb-4 pt-3 my-3">Digiverse API</h1>
-        <div class="form-check form-switch">
-            <input onclick="themeSwitch(event)" type="checkbox" role="switch" class="form-check-input">
-        </div>
         <div class="row mt-4">
             <div class="col-md-6">
                 <h3 class="fw-bold">User Routes</h3>
@@ -182,25 +179,5 @@
     </div>
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-    <script>
-        function themeSwitch(e){
-            const tables = document.getElementsByClassName('table');
-            if(e.target.checked){
-                for(let i = 0; i<tables.length; i++){
-                    tables[i].classList.remove('table-dark');
-                    tables[i].classList.add('table-secondary')
-                }
-                document.querySelector(':root').style.setProperty('--background-color', '#aebdfd4')
-                document.querySelector(':root').style.setProperty('--color', '#1e5ddb')
-            }else{
-                for(let i = 0; i<tables.length; i++){
-                    tables[i].classList.remove('table-secondary');
-                    tables[i].classList.add('table-dark')
-                }
-                document.querySelector(':root').style.setProperty('--background-color', '#0c0c0c')
-                document.querySelector(':root').style.setProperty('--color', 'greenyellow')
-            }
-        }
-    </script>
 </body>
 </html>
